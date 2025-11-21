@@ -1,0 +1,180 @@
+#creation des fonctions crud du module fournisseur
+from Configuration.config import get_connection
+from prettytable import PrettyTable
+
+
+# 1. Ajouter un fournisseur
+def ajouter_fournisseur(fournisseur):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        INSERT INTO fournisseurs 
+        (matricule, nom, adresse, mobile, email, statut)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """
+
+    cursor.execute(sql, (
+        fournisseur.matricule,
+        fournisseur.nom,
+        fournisseur.adresse,
+        fournisseur.mobile,
+        fournisseur.email,
+        fournisseur.statut
+    ))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+
+# 2. Modifier un fournisseur
+def modifier_fournisseur(fournisseur):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        UPDATE fournisseurs
+        SET nom=%s, adresse=%s, mobile=%s, email=%s, statut=%s
+        WHERE matricule=%s
+    """
+
+    cursor.execute(sql, (
+        fournisseur.nom,
+        fournisseur.adresse,
+        fournisseur.mobile,
+        fournisseur.email,
+        fournisseur.statut,
+        fournisseur.matricule
+    ))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+
+# 3. Rechercher un ou plusieurs fournisseurs (infos restreintes)
+def rechercher_fournisseur(matricules):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    liste_matricules = [m.strip() for m in matricules.split(",")]
+
+    table = PrettyTable(["Matricule", "Nom", "Adresse", "Mobile"])
+
+    sql = """
+        SELECT matricule, nom, adresse, mobile
+        FROM fournisseurs 
+        WHERE matricule = %s
+    """
+
+    for m in liste_matricules:
+        cursor.execute(sql, (m,))
+        row = cursor.fetchone()
+        if row:
+            table.add_row(row)
+
+    cursor.close()
+    conn.close()
+
+    return table
+
+
+
+# 4. Consulter un ou plusieurs fournisseurs (détails complets + entrées)
+def consulter_fournisseur(matricules):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    liste_matricules = [m.strip() for m in matricules.split(",")]
+
+    table = PrettyTable([
+        "ID", "Matricule", "Nom", "Adresse", "Mobile", "Email",
+        "Statut", "Date commande", "Statut commande", "Date réception"
+    ])
+
+    sql = """
+        SELECT f.id_fournisseurs AS ID,
+               f.matricule AS matricule,
+               f.nom, 
+               f.adresse,
+               f.mobile,
+               f.email,
+               f.statut,
+               e.date_commande,
+               e.statut_commande,
+               e.date_reception
+        FROM fournisseurs f
+        INNER JOIN gestion_entree e
+        ON f.id_fournisseurs = e.id_fournisseurs
+        WHERE f.matricule = %s
+    """
+
+    for m in liste_matricules:
+        cursor.execute(sql, (m,))
+        rows = cursor.fetchall()
+        for row in rows:
+            table.add_row(row)
+
+    cursor.close()
+    conn.close()
+
+    return table
+
+
+
+# 5. Désactiver un fournisseur
+def desactiver_fournisseur(matricule):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "UPDATE fournisseurs SET statut='0' WHERE matricule=%s"
+    cursor.execute(sql, (matricule,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+
+# 6. Activer un fournisseur
+def activer_fournisseur(matricule):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "UPDATE fournisseurs SET statut='1' WHERE matricule=%s"
+    cursor.execute(sql, (matricule,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+
+# 7. Lister tous les fournisseurs
+def lister_fournisseurs():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT id_fournisseurs, matricule, nom, adresse, mobile, email, statut
+        FROM fournisseurs
+    """
+
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+
+    table = PrettyTable([
+        "ID", "Matricule", "Nom", "Adresse", "Mobile", "Email", "Statut"
+    ])
+
+    for row in rows:
+        table.add_row(row)
+
+    cursor.close()
+    conn.close()
+
+    return table
+
