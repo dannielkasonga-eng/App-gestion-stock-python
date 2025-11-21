@@ -132,18 +132,17 @@ def menu_employe():
 
         elif choix == "3":
             print("\n--- RECHERCHE D'EMPLOYÉS ---")
-            print('Note : pour plusieurs matricules, séparez par ","')
-            chaine = demande_champ("Entrez les matricules")
-            liste = [m.strip() for m in chaine.split(",")]
-
-            table = rechercher_employe(liste)
-            print("\n" + table.get_string() + "\n")
+            matricule = demander_matricule_existant_e("Entrez le matricule de l'employé à rechercher")
+            if matricule:
+                table = rechercher_employe(matricule)
+                print("\n" + table.get_string() + "\n")
 
         elif choix == "4":
             print("\n--- CONSULTATION EMPLOYÉ(S) ---")
-            print('Note : pour plusieurs matricules, séparez par ","')
-            chaine = demande_champ("Entrez les matricules")
-            table = consulter_employe(chaine)
+            matricule = demander_matricule_existant_e("Entrez le matricule de l'employé à consulter")
+            if matricule:
+                table = consulter_employe(matricule)
+                print("\n" + table.get_string() + "\n")
 
             print("\n" + table.get_string() + "\n")
 

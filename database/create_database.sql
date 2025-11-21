@@ -142,26 +142,26 @@ CREATE TABLE ligne_sortie (
 
 -- Remplissage de la table fournisseurs
 INSERT INTO fournisseurs (matricule, nom, adresse, mobile, email, statut) VALUES
-('NEW-KIN-LI-001', 'NEW CESAMEX', 'Av. Kasa-Vubu, Lingwala, Kinshasa', '+243 970 111 001', 'contact@newcesamex.cd', 1),
-('ZEN-KIN-LI-002', 'ZENUPHA LABORATOIRES', 'Av. Libération, Limete, Kinshasa', '+243 970 111 002', 'info@zenupha.cd', 1),
-('CAI-KIN-LI-003', 'CAISA PHARMA INTERNATIONAL', 'Bd Lumumba, Limete, Kinshasa', '+243 970 111 003', 'contact@caisa.cd', 1),
-('PRI-KIN-LI-004', 'PRINCE PHARMA SARL', 'Av. du Commerce, Limete, Kinshasa', '+243 970 111 004', 'contact@princepharma.cd', 1),
-('UNI-KIN-LI-005', 'UNIQUE PHARMA SARL', 'Av. Kikwit n°45, Limete, Kinshasa', '+243 970 111 005', 'contact@uniquepharma.cd', 1),
-('PRO-KIN-GO-006', 'PROMED S.A.R.L.', 'Av. de la Justice, Gombe, Kinshasa', '+243 970 111 006', 'info@promedlabo.cd', 1),
-('DYN-KIN-MA-007', 'DYNAPHARM RD CONGO', 'Av. des Huileries, Matete, Kinshasa', '+243 970 111 007', 'contact@dynapharm.cd', 1),
-('PHA-KIN-GO-008', 'PHARMAKINA SA', 'Av. du Port, Gombe, Kinshasa', '+243 970 111 008', 'info@pharmakina.cd', 1),
-('EVE-KIN-SE-009', 'EVER GREEN PHARMACEUTICALS', 'Av. Kimpese, Selembao, Kinshasa', '+243 970 111 009', 'contact@evergreenpharmas.cd', 1),
-('SHA-KIN-GO-010', 'SHALINA HEALTHCARE', '9-11 Av. de l’Action, Gombe, Kinshasa', '+243 970 111 010', 'info@shalina.cd', 1);
+('NEW243LI001', 'NEW CESAMEX', 'Av. Kasa-Vubu, Lingwala, Kinshasa', '+243 970 111 001', 'contact@newcesamex.cd', 1),
+('ZEN243LI002', 'ZENUPHA LABORATOIRES', 'Av. Libération, Limete, Kinshasa', '+243 970 111 002', 'info@zenupha.cd', 1),
+('CAI243LI003', 'CAISA PHARMA INTERNATIONAL', 'Bd Lumumba, Limete, Kinshasa', '+243 970 111 003', 'contact@caisa.cd', 1),
+('PRI243LI004', 'PRINCE PHARMA SARL', 'Av. du Commerce, Limete, Kinshasa', '+243 970 111 004', 'contact@princepharma.cd', 1),
+('UNI243LI005', 'UNIQUE PHARMA SARL', 'Av. Kikwit n°45, Limete, Kinshasa', '+243 970 111 005', 'contact@uniquepharma.cd', 1),
+('PRO243GO006', 'PROMED S.A.R.L.', 'Av. de la Justice, Gombe, Kinshasa', '+243 970 111 006', 'info@promedlabo.cd', 1),
+('DYN243MA007', 'DYNAPHARM RD CONGO', 'Av. des Huileries, Matete, Kinshasa', '+243 970 111 007', 'contact@dynapharm.cd', 1),
+('PHA243GO008', 'PHARMAKINA SA', 'Av. du Port, Gombe, Kinshasa', '+243 970 111 008', 'info@pharmakina.cd', 1),
+('EVE243SE009', 'EVER GREEN PHARMACEUTICALS', 'Av. Kimpese, Selembao, Kinshasa', '+243 970 111 009', 'contact@evergreenpharmas.cd', 1),
+('SHA243GO010', 'SHALINA HEALTHCARE', '9-11 Av. de l’Action, Gombe, Kinshasa', '+243 970 111 010', 'info@shalina.cd', 1);
 
 -- remplissage de la table employes
 INSERT INTO employes (matricule, nom, prenom, date_naissance, genre, adresse, mobile, email, fonction, statut) VALUES
-('EMPKJEA001', 'KABONGO', 'Jean', '1985-03-12', 'M', 'Av. de la Justice, Gombe, Kinshasa', '+243970111001', 'jean.kabongo@example.com', 'Pharmacien adjoint', 1),
+('EMPKAJE001', 'KABONGO', 'Jean', '1985-03-12', 'M', 'Av. de la Justice, Gombe, Kinshasa', '+243970111001', 'jean.kabongo@example.com', 'Pharmacien adjoint', 1),
 ('EMPMALI002', 'MUKENDI', 'Alice', '1990-07-23', 'F', 'Av. Lumumba, Limete, Kinshasa', '+243970111002', 'alice.mukendi@example.com', 'Assistant', 1),
-('EMNPATP003', 'NGOMA', 'Patrick', '1982-11-05', 'M', 'Av. Kasa-Vubu, Ngaliema, Kinshasa', '+243970111003', 'patrick.ngoma@example.com', 'Caissier', 1),
+('EMPPATP003', 'NGOMA', 'Patrick', '1982-11-05', 'M', 'Av. Kasa-Vubu, Ngaliema, Kinshasa', '+243970111003', 'patrick.ngoma@example.com', 'Caissier', 1),
 ('EMPTMAR004', 'TUMBA', 'Marie', '1993-01-18', 'F', 'Av. Kabinda, Bandalungwa, Kinshasa', '+243970111004', 'marie.tumba@example.com', 'Magasinier', 1),
 ('EMPLPAU005', 'LOKONI', 'Paul', '1987-09-30', 'M', 'Av. du Port, Gombe, Kinshasa', '+243970111005', 'paul.lokoni@example.com', 'Comptable', 1),
-('EMBSOPP006', 'BASENGE', 'Sophie', '1991-06-12', 'F', 'Av. Kikwit, Limete, Kinshasa', '+243970111006', 'sophie.basenge@example.com', 'Assistant', 1),
-('EMMEMMP007', 'MBUYI', 'Emmanuel', '1984-12-21', 'M', 'Av. de la Révolution, Masina, Kinshasa', '+243970111007', 'emmanuel.mbuyi@example.com', 'Pharmacien adjoint', 1),
+('EMPSOPP006', 'BASENGE', 'Sophie', '1991-06-12', 'F', 'Av. Kikwit, Limete, Kinshasa', '+243970111006', 'sophie.basenge@example.com', 'Assistant', 1),
+('EMPEMMP007', 'MBUYI', 'Emmanuel', '1984-12-21', 'M', 'Av. de la Révolution, Masina, Kinshasa', '+243970111007', 'emmanuel.mbuyi@example.com', 'Pharmacien adjoint', 1),
 ('EMPKCHR008', 'KABILA', 'Christine', '1995-08-14', 'F', 'Av. de la Victoire, Ngaliema, Kinshasa', '+243970111008', 'christine.kabila@example.com', 'Caissier', 1),
 ('EMPNMIC009', 'NDONGALA', 'Michel', '1988-02-25', 'M', 'Av. du Commerce, Limete, Kinshasa', '+243970111009', 'michel.ndongala@example.com', 'Magasinier', 1),
 ('EMPMCAT010', 'MBULU', 'Catherine', '1992-05-10', 'F', 'Av. des Huileries, Matete, Kinshasa', '+243970111010', 'catherine.mbulu@example.com', 'Comptable', 1);
@@ -369,18 +369,3 @@ SELECT
   AS total_lignes;
 
 
-SELECT g.id_entrees AS entree,
-       g.id_fournisseurs AS fournisseur,
-       g.date_commande AS commande,
-       g.statut_commande AS commande,
-       g.date_reception AS reception,
-       l.id_ligne AS enregistrement,
-       l.id_produits AS produit,
-       l.numero_lot AS lot,
-       l.peremption,
-       l.prix_unitaire_entree AS prix,
-       l.quantite,
-       l.emplacement
-FROM gestion_entree g
-INNER JOIN ligne_entree l
-ON g.id_entrees = l.id_entrees;
