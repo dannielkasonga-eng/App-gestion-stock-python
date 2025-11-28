@@ -30,27 +30,35 @@ def ajouter_fournisseur(fournisseur):
 
 
 # 2. Modifier un fournisseur
-def modifier_fournisseur(fournisseur):
+def modifier_fournisseur(matricule, fournisseur):
+    """
+    Modifie un fournisseur existant.
+    matricule = matricule du fournisseur cible
+    fournisseur = objet Fournisseur avec les nouvelles valeurs
+    """
     conn = get_connection()
-    cursor = conn.cursor()
+    cur = conn.cursor()
 
     sql = """
-        UPDATE fournisseurs
-        SET nom=%s, adresse=%s, mobile=%s, email=%s, statut=%s
+        UPDATE fournisseurs 
+        SET matricule=%s, nom=%s, adresse=%s, mobile=%s, email=%s, statut=%s
         WHERE matricule=%s
     """
 
-    cursor.execute(sql, (
+    values = (
+        fournisseur.matricule,
         fournisseur.nom,
         fournisseur.adresse,
         fournisseur.mobile,
         fournisseur.email,
         fournisseur.statut,
-        fournisseur.matricule
-    ))
+        matricule
+    )
 
+    cur.execute(sql, values)
     conn.commit()
-    cursor.close()
+
+    cur.close()
     conn.close()
 
 
@@ -177,4 +185,25 @@ def lister_fournisseurs():
     conn.close()
 
     return table
+
+# 8 get_fournisseur_by_matricule
+
+def get_fournisseur_by_matricule(matricule):
+    """
+    Récupère un fournisseur unique par son matricule.
+    Retourne un dictionnaire avec les colonnes ou None si introuvable.
+    """
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)  # important pour obtenir un dict
+
+    sql = "SELECT * FROM fournisseurs WHERE matricule=%s"
+    cur.execute(sql, (matricule,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return None
+    return row
 

@@ -64,7 +64,7 @@ CREATE TABLE gestion_entree (
     id_fournisseurs BIGINT UNSIGNED NOT NULL, 
     date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut_commande ENUM('en cours', 'validee', 'annulee') DEFAULT 'en cours',
-    date_reception TIMESTAMP NULL,
+    date_reception TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     observation TEXT NULL,
     
     CONSTRAINT fk_entree_fournisseur 

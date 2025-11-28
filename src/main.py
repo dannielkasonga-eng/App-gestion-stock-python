@@ -5,6 +5,9 @@ from utils.utils import demander_matricule_existant_f
 from utils.utils import demander_ref_produit_existant
 from utils.utils import demander_identifiants_entree_existante
 from utils.utils import demander_identifiants_sortie_existante
+from utils.utils import demander_identifiants_ligne_entree_existante
+from utils.utils import demander_identifiants_ligne_sortie_existante
+
 
 #Importation du module employe et fonctions crud employe
 
@@ -16,6 +19,8 @@ from crud.crud_employe import (
     lister_employes,
     desactiver_employe,
     activer_employe,
+    get_employe_by_matricule
+
  )
 from modules.employe import Employe 
 
@@ -28,7 +33,8 @@ from crud.crud_fournisseur import (
     rechercher_fournisseur,
     lister_fournisseurs,
     desactiver_fournisseur,
-    activer_fournisseur,  
+    activer_fournisseur,
+    get_fournisseur_by_matricule  
 )
 from modules.fournisseur import Fournisseur
 
@@ -42,7 +48,8 @@ from crud.crud_produit import (
     lister_produits,
     desactiver_produit,
     activer_produit,
-    id_produits_existe
+    id_produits_existe,
+    get_produit_by_ref_produit
 )
 from modules.produit import Produit
 
@@ -69,6 +76,26 @@ from crud.crud_sortie import (
     sortie_existe
 )
 from modules.sortie import Sortie
+
+#Importation du module ligne_entree et fonctions crud ligne_entree
+
+from crud.crud_ligne_entree import (
+    ajouter_ligne_entree,
+    modifier_ligne_entree,
+    lister_ligne_entree
+)
+from crud.crud_entree import rechercher_entree
+from crud.crud_produit import rechercher_produit
+from modules.ligne_entree import LigneEntree
+
+from crud.crud_ligne_sortie import (
+    ajouter_ligne_sortie,
+    modifier_ligne_sortie,
+    lister_ligne_sortie
+)
+from crud.crud_sortie import rechercher_sortie
+from crud.crud_produit import rechercher_produit
+from modules.ligne_sortie import LigneSortie
 
 #creation menu module employe
 
@@ -112,23 +139,84 @@ def menu_employe():
             matricule = demander_matricule_existant_e("Matricule de l'employé à modifier")
             if matricule is None:
                 continue
-
+            
+            #Récupérer l'employé existant
+            employe_actuel = get_employe_by_matricule(matricule)
+            if not employe_actuel:
+                print("\033[31mEmploye introuvable.\033[0m\n")
+                continue
+            
             print("\nLaissez vide un champ pour conserver la valeur actuelle.\n")
+           
+            # IMPORTANT : remplacer vide == conserver
+            matricule = input(f"Matricule [{employe_actuel['matricule']}]: ").strip()
+            if matricule == "":
+                matricule = employe_actuel["matricule"] #conserve le matricule actuel
+
+
+            nom = input(f"Nom [{employe_actuel['nom']}]: ").strip()
+            if nom == "":
+                nom = employe_actuel["nom"]
+
+            prenom = input(f"Prenom [{employe_actuel['prenom']}]: ").strip()
+            if prenom == "":
+                prenom = employe_actuel["prenom"]
+
+            date_naissance = input(f"Date de naissance [{employe_actuel['date_naissance']}]: ").strip()
+            if date_naissance == "":
+                date_naissance = employe_actuel["date_naissance"]
+
+            genre = input(f"Genre [{employe_actuel['genre']}]: ").strip()
+            if genre == "":
+                genre = employe_actuel["genre"]
+
+            adresse = input(f"Adresse [{employe_actuel['adresse']}]: ").strip()
+            if adresse == "":
+                adresse = employe_actuel["adresse"]
+
+            mobile = input(f"Mobile [{employe_actuel['mobile']}]: ").strip()
+            if mobile == "":
+                mobile = employe_actuel["mobile"]
+
+            email = input(f"Email [{employe_actuel['email']}]: ").strip()
+            if email == "":
+                email = employe_actuel["email"]
+
+            fonction = input(f"Fonction [{employe_actuel['fonction']}]: ").strip()
+            if fonction == "":
+                fonction = employe_actuel["fonction"]
+
+            statut = input(f"Statut (1=actif,0=inactif) [{employe_actuel['statut']}]: ").strip()
+            if statut not in ("0", "1"):
+                statut = employe_actuel["statut"]
+                
+            else:
+                statut = statut 
+                
+
+            #création de l'objet final
 
             emp = Employe(
-                nom=input("Nom : ") or None,
-                prenom=input("Prénom : ") or None,
-                date_naissance=input("Date de naissance : ") or None,
-                genre=input("Genre : ") or None,
-                adresse=input("Adresse : ") or None,
-                mobile=input("Mobile : ") or None,
-                email=input("Email : ") or None,
-                fonction=input("Fonction : ") or None,
-                statut="1"
+                matricule=matricule,
+                nom=nom,
+                prenom=prenom,
+                date_naissance=date_naissance,
+                genre=genre,
+                adresse=adresse,
+                mobile=mobile,
+                email=email,
+                fonction=fonction,
+                statut=statut
             )
 
-            modifier_employe(matricule, emp)
-            print("\nEmployé modifié avec succès.\n")
+            try:
+                modifier_employe(matricule, emp)
+                print("\nModification effectué avec succès.\n")
+            except Exception as e:
+                print("\nErreur SQL :", e, "\n")
+                
+
+
 
         elif choix == "3":
             print("\n--- RECHERCHE D'EMPLOYÉS ---")
@@ -209,18 +297,58 @@ def menu_fournisseur():
             if matricule is None:
                 continue
 
+            #Récupérer le fournisseur existant 
+            fournisseur_actuel = get_fournisseur_by_matricule(matricule)
+            if not fournisseur_actuel:
+                print("\033[31mfournisseur introuvable.\033[0m\n")
+                continue
+
+
             print("\nLaissez vide un champ pour conserver la valeur actuelle.\n")
 
-            fournisseur = Fournisseur(
-                nom=input("Nom : ") or None,
-                adresse=input("Adresse : ") or None,
-                mobile=input("Mobile : ") or None,
-                email=input("Email : ") or None,
-                statut=input("Statut (1=actif, 0=inactif) : ") or "1"
-            )
-            modifier_fournisseur(matricule, fournisseur)
-            print("\nFournisseur modifié avec succès.\n")
+             # IMPORTANT : remplacer vide == conserver
+            matricule = input(f"Matricule [{fournisseur_actuel['matricule']}]: ").strip()
+            if matricule == "":
+                matricule = fournisseur_actuel["matricule"]
 
+            nom = input(f"Nom [{fournisseur_actuel['nom']}]: ").strip()
+            if nom == "":
+                nom = fournisseur_actuel["nom"]
+
+            adresse = input(f"Adresse [{fournisseur_actuel['adresse']}]: ").strip()
+            if adresse == "":
+                adresse = fournisseur_actuel["adresse"]
+
+            mobile = input(f"Mobile [{fournisseur_actuel['mobile']}]: ").strip()
+            if mobile == "":
+                mobile = fournisseur_actuel["mobile"]
+
+            email = input(f"Email [{fournisseur_actuel['email']}]: ").strip()
+            if email == "":
+                email = fournisseur_actuel["email"]
+
+            statut = input(f"Statut (1=actif,0=inactif) [{fournisseur_actuel['statut']}]: ").strip()
+            if statut not in ("0", "1"):
+                statut = fournisseur_actuel["statut"]
+            else:
+                statut = statut
+
+            #création de l'objet final
+
+            four = Fournisseur(
+                matricule=matricule,
+                nom=nom,
+                adresse=adresse,
+                mobile=mobile,
+                email=email,
+                statut=statut
+            )
+            try:
+                modifier_fournisseur(matricule, four)
+                print("\nModification effectuée avec succès.\n")
+            except Exception as e:
+                print("\nerreur SQL :", e,"\n")
+   
         elif choix == "3":
             print("\n--- RECHERCHE DE FOURNISSEUR(S) ---")
             print('Note : pour plusieurs matricules, séparez par ","')
@@ -298,24 +426,94 @@ def menu_produit():
 
         elif choix == "2":
             print("\n--- MODIFICATION D'UN PRODUIT ---")
-            ref_prod = demander_ref_produit_existant("Référence du produit à modifier")
-            if ref_prod is None:
+            ref_produit = demander_ref_produit_existant("Référence du produit à modifier")
+            if ref_produit is None:
+                continue
+
+            #Récupérer le produit actuel
+            produit_actuel = get_produit_by_ref_produit(ref_produit)
+            if not produit_actuel:
+                print("\033[31mProduit introuvable.\033[0m\n")
                 continue
 
             print("\nLaissez vide un champ pour conserver la valeur actuelle.\n")
 
+            # IMPORTANT : remplacer vide == conserver
+            id_fournisseurs = input(f"Identifiant fournisseur [{produit_actuel['id_fournisseurs']}]: ").strip()
+            if id_fournisseurs == "":
+                id_fournisseurs = produit_actuel["id_fournisseurs"] 
+
+
+            ref_produit = input(f"Référence [{produit_actuel['ref_produit']}]: ").strip()
+            if ref_produit == "":
+                ref_produit = produit_actuel["ref_produit"] #conserve la valeur actuelle
+
+            code_atc = input(f"Code atc [{produit_actuel['code_atc']}]: ").strip()
+            if code_atc == "":
+                code_atc = produit_actuel["code_atc"] 
+
+            nom_commercial = input(f"Nom commercial [{produit_actuel['nom_commercial']}]: ").strip()
+            if nom_commercial == "":
+                nom_commercial = produit_actuel["nom_commercial"] 
+
+            dci = input(f"Dci [{produit_actuel['dci']}]: ").strip()
+            if dci == "":
+                dci = produit_actuel["dci"] 
+
+            dosage = input(f"Dosage [{produit_actuel['dosage']}]: ").strip()
+            if dosage == "":
+                dosage = produit_actuel["dosage"] 
+
+            forme = input(f"Forme [{produit_actuel['forme']}]: ").strip()
+            if forme == "":
+                forme = produit_actuel["forme"] 
+
+            conditionnement = input(f"Conditionnement [{produit_actuel['conditionnement']}]: ").strip()
+            if conditionnement == "":
+                conditionnement = produit_actuel["conditionnement"] 
+
+            stock_minimum = input(f"Seuil d'alerte [{produit_actuel['stock_minimum']}]: ").strip()
+            if stock_minimum == "":
+                stock_minimum = produit_actuel["stock_minimum"] 
+
+            stock_maximum = input(f"Stock initial [{produit_actuel['stock_maximum']}]: ").strip()
+            if stock_maximum == "":
+                stock_maximum = produit_actuel["stock_maximum"] 
+
+            description_produit = input(f"Description [{produit_actuel['description_produit']}]: ").strip()
+            if description_produit == "":
+                description_produit = produit_actuel["description_produit"] 
+
+            statut = input(f"Statut (1=actif,0=inactif) [{produit_actuel['statut']}]: ").strip()
+            if statut not in ("0", "1"):
+                statut = produit_actuel["statut"]
+            else:
+                statut = statut
+
+            #création de l'objet final
+
             prod = Produit(
-                code_atc=input("Code ATC : ") or None,
-                nom_commercial=input("Nom commercial : ") or None,
-                dci=input("DCI : ") or None,
-                description=input("Description : ") or None,
-                stock_minimum=input("Stock minimum : ") or None,
-                stock_maximum=input("Stock maximum : ") or None,
-                statut="1"
+                ref_produit=ref_produit,
+                code_atc=code_atc,
+                nom_commercial=nom_commercial,
+                dci=dci,
+                dosage=dosage,
+                forme=forme,
+                conditionnement=conditionnement,
+                stock_minimum=stock_minimum,
+                stock_maximum=stock_maximum,
+                description_produit=description_produit,
+                statut=statut,
+                id_fournisseurs=id_fournisseurs
+
             )
 
-            modifier_produit(ref_prod, prod)
-            print("\nProduit modifié avec succès.\n")
+            try:
+                modifier_produit(ref_produit, prod)
+                print("\nModification effectuée avec succès.\n")
+            except Exception as e:
+                print("\nErreur SQL :", e,"\n")
+                
 
         elif choix == "3":
             print("\n--- RECHERCHE DE PRODUIT ---")
@@ -408,18 +606,17 @@ def menu_entree():
         choix = input("Choisissez une option :")
         if choix == "1":
             print("\n--- AJOUT D'UNE NOUVELLE ENTREE ---")
-
             # Vérification ID fournisseur
             tentatives = 0
             id_f = None
 
             while tentatives < 3:
-                id_f = input("Identifiant du fournisseur : ").strip()
+                id_f = input("Identifiant du fournisseur :").strip()
 
-                if rechercher_fournisseur(id_f):      
+                if rechercher_fournisseur(id_f):
                     break
                 else:
-                    print("\033[31mErreur !\033[0m id erronné ou non sauvegardé. Réessayez :")
+                    print("\033[31mErreur !\033[0m id erronné ou non sauvegardé")
                     tentatives += 1
 
             if tentatives == 3:
@@ -427,17 +624,21 @@ def menu_entree():
                 print("Conseil : consultez la liste des fournisseurs")
                 continue
 
-            # Champs restants
-            statut = demande_champ("Statut")
+            #statut et observation
+            statut = demande_champ("Statut (en cours / annuler / validé)").lower()
             observation = demande_champ("Observation")
+
+            #création de l'objet final
+
             entree = Entree(
                 id_fournisseurs=id_f,
                 statut_commande=statut,
-                observation=observation
+                observation=observation 
             )
 
             ajouter_entree(entree)
             print("Entrée sauvegardée avec succès !")
+
 
         elif choix == "2":
             print("\n--- MODIFICATION D'UNE ENTREE ---")
@@ -521,8 +722,8 @@ def menu_sortie():
         if choix == "1":
             print("\n--- AJOUT D'UNE NOUVELLE SORTIE ---")
             print("Note : seuls le pharmacien adjoint, assistant et caissier peuvent effectuer une sortie.\n")
-            
-            #vérification ID employe
+
+            # Vérification ID employé
             tentatives = 0
             id_e = None
 
@@ -535,15 +736,32 @@ def menu_sortie():
                     print("\033[31mErreur !\033[0m id erronné ou non sauvegardé. Réessayez :")
                     tentatives += 1
 
-            if tentatives == 3:
-                print("Avez-vous oublié l'identifiant ?")
-                print("Conseil : consultez la liste des employés")
-                continue
+                if tentatives == 3:
+                    print("Avez-vous oublié l'identifiant ?")
+                    print("Conseil : consultez la liste des employés")
+                    continue
 
-            destinataire = demande_champ("Destinataire (particulier/professionnel)")
-            statut = demande_champ("Statut")
-            observation = demande_champ("Observation (libre d'accès / sous ordonnance)")
-            #champ_restants
+            # Valeurs autorisées pour le statut (doit correspondre à l'ENUM MySQL)
+            valeurs_statut = ["libre d'accès", "sous ordonnance"]
+
+            # Saisie du destinataire
+            destinataire = ""
+            while destinataire not in ["particulier", "professionnel"]:
+                destinataire = input("Destinataire (particulier/professionnel) : ").strip().lower()
+                if destinataire not in ["particulier", "professionnel"]:
+                    print("\033[31mValeur incorrecte. Réessayez !\033[0m")
+
+            # Saisie sécurisée du statut
+            statut = ""
+            while statut not in valeurs_statut:
+                statut = input("Statut (libre d'accès / sous ordonnance) : ").strip()
+                if statut not in valeurs_statut:
+                    print("\033[31mLa valeur saisie est incorrecte. Réessayez.\033[0m")
+
+            # Saisie de l'observation
+            observation = input("Observation : ").strip()
+
+            # Création de l'objet Sortie
             sortie = Sortie(
                 id_employes=id_e,
                 destinataire=destinataire,
@@ -551,6 +769,7 @@ def menu_sortie():
                 observation=observation
             )
 
+            # Ajout dans la base
             ajouter_sortie(sortie)
             print("Sortie sauvegardée avec succès !")
 
@@ -571,7 +790,7 @@ def menu_sortie():
 
             # Saisie des nouveaux champs (None = ne pas modifier)
             sortie = Sortie(
-                id_employes=input("ID employes :").strip() or None,
+                id_employes =input("Identifiant de l'employé : ").strip() or None,
                 statut =input("Statut sortie : ").strip() or None,
                 observation=input("Observation : ").strip() or None
             )
@@ -590,21 +809,22 @@ def menu_sortie():
                 continue
 
             modifier_sortie(id_sorties, id_employes, nouveaux_champs)
-            print("\nEntrée modifiée avec succès.\n")    
+            print("\nModification effectuée avec succès.\n")    
 
         elif choix == "3":
             print("\n--- CONSULTER UNE SORTIE ---")
 
-            id_s = input("ID de la sortie : ").strip()
-            id_e = input("ID de l'employé : ").strip()
-
-            if not sortie_existe(id_s, id_e):
-                print("\033[31mSortie non sauvegardée\033[0m")
-                print("\033[31mConseil : Consultez la liste des sorties\033[0m")
+            #Récupération des identifiants valides d'une sortie
+            identifiants = demander_identifiants_sortie_existante(
+                "ID de la sortie",
+                "ID de l'employé"
+            )
+            if identifiants is None:
                 continue
+            id_sorties, id_employes = identifiants
 
-            table = consulter_sortie(id_s, id_e)
-            print(f"Voici les informations trouvées pour {id_s} et {id_e}")
+            table = consulter_sortie(id_sorties, id_employes)
+            print(f"Voici les informations trouvées pour {id_sorties} et {id_employes}")
             print(table)
 
         elif choix == "4":
@@ -632,8 +852,168 @@ def menu_ligne_entree():
 0. Quitter le programme             
 """)
         choix = input("Choisissez une option :")
-        if choix =="1":
-            print("bonjour")
+        
+        if choix == "1":
+            print("\n--- AJOUT D'UNE NOUVELLE LIGNE ENTREE ---")
+
+            #véfication des identifiants del'entree
+
+            identifiants = demander_identifiants_entree_existante(
+                "ID de l'entrée",
+                "ID du fournisseur"
+            )
+            if identifiants is None:
+                continue
+            id_entrees, _ = identifiants
+
+            # Vérification ID produit
+            tentatives = 0
+            id_produits = None
+
+            while tentatives < 3:
+                id_produits = input("ID du produit : ").strip()
+
+                if rechercher_produit(id_produits):
+                    break
+                else:
+                    print("\033[31mErreur ! ID produit incorrect.\033[0m Réessayez.")
+                    tentatives += 1
+
+            if tentatives == 3:
+                print("Conseil : consultez la liste des produits.")
+                continue
+
+            # Champs obligatoires
+            numero_lot = demande_champ("Numéro de lot")
+            peremption = demande_champ("Date de péremption")
+            quantite = demande_champ("Quantité")
+            prix_unitaire_entree = demande_champ("Prix unitaire")
+            emplacement = demande_champ("Emplacement")
+
+            # Construction de l’objet
+            ligne = LigneEntree(
+                id_entrees=id_entrees,
+                id_produits=id_produits,
+                numero_lot=numero_lot,
+                peremption=peremption,
+                quantite=int(quantite),
+                prix_unitaire_entree=float(prix_unitaire_entree),
+                emplacement=emplacement
+            )
+
+            ajouter_ligne_entree(ligne)
+            print("Ligne d'entrée ajoutée avec succès !\n")
+
+        elif choix == "2":
+            print("\n--- MODIFICATION D'UNE LIGNE ENTREE ---")
+
+            # Récupération validée des identifiants id_ligne et id_entrees
+            identifiants = demander_identifiants_ligne_entree_existante(
+                "ID de la ligne",
+                "ID de l'entree"
+            )
+
+            if identifiants is None:
+                continue
+            id_ligne, ancien_id_entrees = identifiants
+
+            print("\nLaissez vide un champ pour conserver la valeur actuelle.\n")
+
+            # Saisie des nouveaux champs (None = ne pas modifier)
+            nouvelle_id_entrees = input("Nouvel ID de l'entree : ").strip() or None
+            nouvelle_id_produits = input("Nouvel ID du produit : ").strip() or None
+            nouveau_numero_lot = input("Nouveau numero lot : ").strip() or None
+            nouvelle_peremption = input("Nouvelle date de peremption : ").strip() or None
+
+            # Quantité
+            while True:
+                qte_input = input("Nouvelle quantité : ").strip()
+                if not qte_input:
+                    nouvelle_quantite = None
+                    break
+                try:
+                    nouvelle_quantite = int(qte_input)
+                    break
+                except ValueError:
+                    print("\033[31mErreur !\033[0m Entrez un nombre entier pour la quantité.")
+
+            # Prix unitaire
+            while True:
+                prix_input = input("Nouveau prix unitaire : ").strip()
+                if not prix_input:
+                    nouveau_prix = None
+                    break
+                try:
+                    nouveau_prix = float(prix_input)
+                    break
+                except ValueError:
+                    print("\033[31mErreur !\033[0m Entrez un nombre pour le prix unitaire.")
+
+            # Liste des emplacements valides
+            emplacements_valides = ["Z-PMO", "Z-TAC", "Z-ER", "Z-Q"]
+
+            # Saisie + validation
+            while True:
+                nouvel_emplacement = input(
+                    "Nouvel emplacement [Z-PMO], [Z-TAC], [Z-ER], [Z-Q]\nSélectionnez un emplacement: "
+                ).strip()
+
+                if not nouvel_emplacement:  
+                    nouvel_emplacement = None
+                    break
+
+                if nouvel_emplacement and nouvel_emplacement not in emplacements_valides:
+                    print("\033[31mCet emplacement n'est pas valide. Modification annulée.\033[0m")
+                    continue
+                    
+                break
+
+            # Validation des nouveaux IDs
+            if nouvelle_id_entrees and not rechercher_entree(nouvelle_id_entrees):
+                print("\033[31mErreur !\033[0m ID entree invalide. Modification annulée.")
+                continue
+            if nouvelle_id_produits and not rechercher_produit(nouvelle_id_produits):
+                print("\033[31mErreur !\033[0m ID produit invalide. Modification annulée.")
+                continue
+
+            # Construction de l’objet LigneEntree 
+            ligne_entree = LigneEntree(
+            id_entrees=nouvelle_id_entrees,
+            id_produits=nouvelle_id_produits,                
+            numero_lot=nouveau_numero_lot,
+            peremption=nouvelle_peremption,
+            quantite=nouvelle_quantite,
+            prix_unitaire_entree=nouveau_prix
+           )
+
+           # Construction du dictionnaire  le CRUD
+            nouveaux_champs = {}
+            if ligne_entree.id_entrees is not None:
+                nouveaux_champs["id_entrees"] = ligne_entree.id_entrees
+            if ligne_entree.id_produits is not None:
+                nouveaux_champs["id_produits"] = ligne_entree.id_produits
+            if ligne_entree.numero_lot is not None:
+                nouveaux_champs["numero_lot"] = ligne_entree.numero_lot
+            if ligne_entree.peremption is not None:
+                nouveaux_champs["peremption"] = ligne_entree.peremption
+            if ligne_entree.quantite is not None:
+                nouveaux_champs["quantite"] = ligne_entree.quantite
+            if ligne_entree.prix_unitaire_entree is not None:
+                nouveaux_champs["prix_unitaire_entree"] = ligne_entree.prix_unitaire_entree
+            if ligne_entree.emplacement is not None:
+                nouveaux_champs["emplacement"] = ligne_entree.emplacement
+
+            if not nouveaux_champs:
+                print("Aucune modification effectuée.")
+                continue
+
+            modifier_ligne_entree(id_ligne, ancien_id_entrees, nouveaux_champs)
+            print("Ligne entree modifiée avec succès.\n")
+
+        elif choix == "3":
+            print("\n--- LISTE DES LIGNES ENTREE ---")
+            print(lister_ligne_entree())
+
         elif choix =="4":
             menu_principal()
         elif choix=="0":
@@ -655,8 +1035,146 @@ def menu_ligne_sortie():
 0. Quitter le programme             
 """)
         choix = input("Choisissez une option :")
-        if choix =="1":
-            print("bonjour")
+        if choix == "1":
+            print("\n--- AJOUT D'UNE NOUVELLE LIGNE SORTIE ---")
+
+            # Vérification des identifiants de la sortie
+            identifiants = demander_identifiants_sortie_existante(
+                "ID de la sortie",
+                "ID de l'employé"
+            )
+            if identifiants is None:
+                continue
+            id_sorties, _ = identifiants
+            
+            # Vérification ID produit
+            tentatives = 0
+            id_produits = None
+
+            while tentatives < 3:
+                id_produits = input("ID du produit : ").strip()
+
+                if rechercher_produit(id_produits):
+                    break
+                else:
+                    print("\033[31mErreur ! ID produit incorrect.\033[0m Réessayez.")
+                    tentatives += 1
+
+            if tentatives == 3:
+                print("avez-vous oublié l'identifiant du produit ?")
+                print("Conseil : consultez la liste des produits.")
+                continue
+
+            # Champs obligatoires
+            numero_lot = demande_champ("Numéro de lot")
+            peremption = demande_champ("Date de péremption (YYYY-MM-JJ)")
+            quantite = demande_champ("Quantité")
+            prix_unitaire_vente = demande_champ("Prix unitaire")
+            
+
+            # Construction de l’objet
+            ligne = LigneSortie (
+                id_sorties=id_sorties,
+                id_produits=id_produits,
+                numero_lot=numero_lot,
+                peremption=peremption,
+                quantite=int(quantite),
+                prix_unitaire_vente=float(prix_unitaire_vente)
+            )
+
+            ajouter_ligne_sortie(ligne)
+            print("Ligne de sortie ajoutée avec succès !\n")
+
+        elif choix == "2":
+            print("\n--- MODIFICATION D'UNE LIGNE SORTIE ---")
+
+            # Récupération validée des identifiants id_ligne et id_sorties
+            identifiants = demander_identifiants_ligne_sortie_existante(
+                "ID de la ligne",
+                "ID de la sortie"
+            )
+
+            if identifiants is None:
+                continue
+            id_ligne, ancien_id_sorties = identifiants
+
+            print("\nLaissez vide un champ pour conserver la valeur actuelle.\n")
+
+            # Saisie des nouveaux champs (None = ne pas modifier)
+            nouvelle_id_sorties = input("Nouvel ID de la sortie : ").strip() or None
+            nouvelle_id_produits = input("Nouvel ID du produit : ").strip() or None
+            nouveau_numero_lot = input("Nouveau numero lot : ").strip() or None
+            nouvelle_peremption = input("Nouvelle date de peremption : ").strip() or None
+
+            # Quantité
+            while True:
+                qte_input = input("Nouvelle quantité : ").strip()
+                if not qte_input:
+                    nouvelle_quantite = None
+                    break
+                try:
+                    nouvelle_quantite = int(qte_input)
+                    break
+                except ValueError:
+                    print("\033[31mErreur !\033[0m Entrez un nombre entier pour la quantité.")
+
+            # Prix unitaire
+            while True:
+                prix_input = input("Nouveau prix unitaire : ").strip()
+                if not prix_input:
+                    nouveau_prix = None
+                    break
+                try:
+                    nouveau_prix = float(prix_input)
+                    break
+                except ValueError:
+                    print("\033[31mErreur !\033[0m Entrez un nombre pour le prix unitaire.")
+
+                # Validation des nouveaux IDs
+                if nouvelle_id_sorties and not rechercher_sortie(nouvelle_id_sorties):
+                    print("\033[31mErreur !\033[0m ID sortie invalide. Modification annulée.")
+                    continue
+                if nouvelle_id_produits and not rechercher_produit(nouvelle_id_produits):
+                    print("\033[31mErreur !\033[0m ID produit invalide. Modification annulée.")
+                    continue
+
+            # Construction de l’objet LigneSortie 
+            ligne_sortie = LigneSortie(
+            id_sorties=nouvelle_id_sorties,
+            id_produits=nouvelle_id_produits,
+            numero_lot=nouveau_numero_lot,
+            peremption=nouvelle_peremption,
+            quantite=nouvelle_quantite,
+            prix_unitaire_vente=nouveau_prix
+            )
+
+            # Construction du dictionnaire  CRUD
+            nouveaux_champs = {}
+            if ligne_sortie.id_sorties is not None:
+                nouveaux_champs["id_sorties"] = ligne_sortie.id_sorties
+            if ligne_sortie.id_produits is not None:
+                nouveaux_champs["id_produits"] = ligne_sortie.id_produits
+            if ligne_sortie.numero_lot is not None:
+                nouveaux_champs["numero_lot"] = ligne_sortie.numero_lot
+            if ligne_sortie.peremption is not None:
+                nouveaux_champs["peremption"] = ligne_sortie.peremption
+            if ligne_sortie.quantite is not None:
+                nouveaux_champs["quantite"] = ligne_sortie.quantite
+            if ligne_sortie.prix_unitaire_vente is not None:
+                nouveaux_champs["prix_unitaire_vente"] = ligne_sortie.prix_unitaire_vente
+
+            if not nouveaux_champs:
+                print("Aucune modification effectuée.")
+                continue
+
+            modifier_ligne_sortie(id_ligne, ancien_id_sorties, nouveaux_champs)
+            print("Ligne sortie modifiée avec succès.\n")
+
+
+        elif choix == "3":
+            print("\n--- LISTE DES LIGNES ENTREE ---")
+            print(lister_ligne_sortie())
+
         elif choix =="4":
             menu_principal()
         elif choix=="0":

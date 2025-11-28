@@ -16,6 +16,7 @@ def ajouter_produit(produit):
     """
 
     values = (
+        produit.id_fournisseurs,
         produit.ref_produit,
         produit.code_atc,
         produit.nom_commercial,
@@ -35,28 +36,44 @@ def ajouter_produit(produit):
 
 # 2. modifier produit
 def modifier_produit(ref_produit, produit):
+    """
+    Modifie un produit existant.
+    ref_produit = référence du produit cible
+    produit = objet Produit avec les nouvelles valeurs
+    """
+
     conn = get_connection()
     cursor = conn.cursor()
 
     sql = """
         UPDATE produits SET
+            id_fournisseurs=%s,
+            ref_produit=%s,
             code_atc=%s,
             nom_commercial=%s,
             dci=%s,
-            description_produit=%s,
+            dosage=%s,
+            forme=%s,
+            conditionnement=%s,
             stock_minimum=%s,
             stock_maximum=%s,
+            description_produit=%s,
             statut=%s
         WHERE ref_produit=%s
     """
 
     values = (
+        produit.id_fournisseurs,
+        produit.ref_produit,
         produit.code_atc,
         produit.nom_commercial,
         produit.dci,
-        produit.description_produit,
+        produit.dosage,
+        produit.forme,
+        produit.conditionnement,
         produit.stock_minimum,
         produit.stock_maximum,
+        produit.description_produit,
         produit.statut,
         ref_produit
     )
@@ -179,12 +196,12 @@ def lister_produits():
     cursor = conn.cursor()
 
     table = PrettyTable([
-        "ID", "Réf", "ATC", "Nom", "DCI",
+        "ID", "Fournisseurs", "Réf", "ATC", "Nom", "DCI",
         "Description", "Stock min", "Stock max", "Statut"
     ])
 
     sql = """
-        SELECT id_produits, ref_produit, code_atc, nom_commercial,
+        SELECT id_produits, id_fournisseurs, ref_produit, code_atc, nom_commercial,
                dci, description_produit, stock_minimum,
                stock_maximum, statut
         FROM produits
@@ -225,3 +242,24 @@ def id_produits_existe(id_prod):
     cur.close()
     conn.close()
     return existe
+
+# 8 get_produit_by_ref_produit
+
+def get_produit_by_ref_produit(ref_produit):
+    """
+    Récupère un produit unique par son ref_produit.
+    Retourne un dictionnaire avec les colonnes ou None si introuvable.
+    """
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)  # important pour obtenir un dict
+
+    sql = "SELECT * FROM produits WHERE ref_produit=%s"
+    cur.execute(sql, (ref_produit,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return None
+    return row

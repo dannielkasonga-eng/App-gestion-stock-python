@@ -13,14 +13,13 @@ def ajouter_sortie(sortie):
 
     sql = """
         INSERT INTO gestion_sortie(
-            id_employes, date_sortie, destinataire, statut, observation
+            id_employes, destinataire, statut, observation
         )
-        VALUES (%s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s)
     """
 
     values = (
         sortie.id_employes,
-        sortie.date_sortie,
         sortie.destinataire,
         sortie.statut,
         sortie.observation
@@ -59,16 +58,14 @@ def modifier_sortie(id_sorties, id_employes, nouveaux_champs: dict):
 
 
 # 3. Consulter une sortie (détails avec jointure)
-def consulter_sortie(ids):
+def consulter_sortie(id_sorties, id_employes):
     """
-    ids = "1,2,3"
-    Retourne une PrettyTable avec les détails complets.
+    Retourne une PrettyTable avec les détails complets
+    pour une sortie donnée + son employé.
     """
 
     conn = get_connection()
     cur = conn.cursor()
-
-    liste_ids = [i.strip() for i in ids.split(",")]
 
     table = PrettyTable([
         "ID", "Identifiant", "Employé", "Sortie", "Destinataire",
@@ -99,13 +96,14 @@ def consulter_sortie(ids):
         LEFT JOIN produits p
             ON ls.id_produits = p.id_produits
         WHERE s.id_sorties = %s
+          AND s.id_employes = %s
     """
 
-    for identifiant in liste_ids:
-        cur.execute(sql, (identifiant,))
-        rows = cur.fetchall()
-        for row in rows:
-            table.add_row(row)
+    cur.execute(sql, (id_sorties, id_employes))
+    rows = cur.fetchall()
+
+    for row in rows:
+        table.add_row(row)
 
     cur.close()
     conn.close()
@@ -172,5 +170,35 @@ def sortie_existe(id_sorties, id_employes):
     conn.close()
 
     return row is not None
+
+def rechercher_sortie(id_sorties, id_employes=None):
+    """
+    Vérifie si la sortie existe.
+    Si id_employes est fourni, vérifie aussi que la sortie appartient à cet employé.
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+
+    if id_employes:
+        sql = """
+            SELECT id_sorties
+            FROM gestion_sortie
+            WHERE id_sorties = %s AND id_employes = %s
+        """
+        cur.execute(sql, (id_sorties, id_employes))
+    else:
+        sql = """
+            SELECT id_sorties
+            FROM gestion_sortie
+            WHERE id_sorties = %s
+        """
+        cur.execute(sql, (id_sorties,))
+
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    return result is not None
+
 
 

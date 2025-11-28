@@ -1,5 +1,3 @@
-
-
 from Configuration.config import get_connection
 from prettytable import PrettyTable
 
@@ -56,13 +54,21 @@ def modifier_employe(matricule, employe):
 
     sql = """
         UPDATE employes SET
-            nom=%s, prenom=%s, date_naissance=%s,
-            genre=%s, adresse=%s, mobile=%s,
-            email=%s, fonction=%s, statut=%s
+            matricule=%s,
+            nom=%s, 
+            prenom=%s, 
+            date_naissance=%s,
+            genre=%s, 
+            adresse=%s, 
+            mobile=%s,
+            email=%s, 
+            fonction=%s, 
+            statut=%s
         WHERE matricule=%s
     """
 
     values = (
+        employe.matricule,
         employe.nom,
         employe.prenom,
         employe.date_naissance,
@@ -217,3 +223,24 @@ def lister_employes():
     conn.close()
 
     return table
+
+# 8 get_employe_by_matricule
+
+def get_employe_by_matricule(matricule):
+    """
+    Récupère un employé unique par son matricule.
+    Retourne un dictionnaire avec les colonnes ou None si introuvable.
+    """
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)  # important pour obtenir un dict
+
+    sql = "SELECT * FROM employes WHERE matricule=%s"
+    cur.execute(sql, (matricule,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return None
+    return row

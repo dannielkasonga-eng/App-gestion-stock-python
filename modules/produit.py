@@ -4,23 +4,14 @@ from prettytable import PrettyTable
 class Produit:
     def __init__(
         self,
-        id_produits=None,
-        ref_produit=None,      
+        ref_produit=None, code_atc=None, nom_commercial=None, dci=None,
+        dosage=None, forme=None, conditionnement=None, stock_minimum=None,
+        stock_maximum=None, description_produit=None, statut="1", id_produits=None, 
         id_fournisseurs=None,
-        code_atc=None,
-        nom_commercial=None,
-        dci=None,
-        dosage=None,
-        forme=None,
-        conditionnement=None,
-        stock_minimum=None,
-        stock_maximum=None,
-        description=None,
-        statut="1"
     ):
         self.id_produits = id_produits       # utilisé pour état du stock
-        self.ref_produit = ref_produit       # utilisé pour recherche/consultation/modification/desactivation/activation
         self.id_fournisseurs = id_fournisseurs
+        self.ref_produit = ref_produit       # utilisé pour recherche/consultation/modification/desactivation/activation
         self.code_atc = code_atc
         self.nom_commercial = nom_commercial
         self.dci = dci
@@ -29,7 +20,7 @@ class Produit:
         self.conditionnement = conditionnement
         self.stock_minimum = stock_minimum
         self.stock_maximum = stock_maximum
-        self.description = description
+        self.description_produit = description_produit
         self.statut = statut
 
     def __str__(self):
