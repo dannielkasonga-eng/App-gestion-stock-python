@@ -4,6 +4,7 @@ from crud.crud_fournisseur import rechercher_fournisseur
 from crud.crud_entree import entree_existe
 from crud.crud_sortie import sortie_existe
 from crud.crud_produit import id_produits_existe
+from crud.crud_fournisseur import id_fournisseurs_existe
 from crud.crud_ligne_entree import ligne_entree_existe
 from crud.crud_ligne_sortie import ligne_sortie_existe
 
@@ -88,6 +89,31 @@ def demander_ref_produit_existant(label):
     print("Conseil : consultez la liste des produits sauvegardés.\n")
     return None
 
+def demander_id_fournisseur_existant(label):
+    tentatives = 0
+
+    while tentatives < 3:
+        valeur = input(f"{label} : ").strip()
+
+        # Vérifier que la valeur est un entier
+        if not valeur.isdigit():
+            print("Un identifiant est un nombre entier.\n")
+            tentatives += 1
+            continue
+
+        id_fournisseurs = int(valeur)
+
+        # Vérifier existence via ta fonction
+        if id_fournisseurs_existe(id_fournisseurs):
+            return id_fournisseurs
+
+        print("Identifiant fournisseur introuvable. Réessayez.\n")
+        tentatives += 1
+
+    print("Avez-vous oublié l'id fournisseur ?")
+    print("Conseil : consultez la liste des fournisseurs sauvegardés.\n")
+    return None
+
 def demander_id_produit_existant(label):
     tentatives = 0
 
@@ -113,29 +139,51 @@ def demander_id_produit_existant(label):
     print("Conseil : consultez la liste des produits sauvegardés.\n")
     return None
 
-
-
 def demander_identifiants_entree_existante(label_entree, label_fournisseur):
-    id_entrees = input(f"{label_entree} : ").strip()
-    id_fournisseurs = input(f"{label_fournisseur} : ").strip()
 
-    if not entree_existe(id_entrees, id_fournisseurs):
-        print("\033[31mEntrée non sauvegardée\033[0m")
-        print("\033[31mConseil : Consultez la liste des entrées\033[0m")
-        return None
+    while True:
+        print()
+        id_entrees = input(f"{label_entree}: ").strip()
+        id_fournisseurs = input(f"{label_fournisseur}: ").strip()
 
-    return id_entrees, id_fournisseurs
+        # Vérification numérique
+        if not id_entrees.isdigit() or not id_fournisseurs.isdigit():
+            print("Les identifiants doivent être numériques. Réessayez.\n")
+            continue
+
+        id_entrees = int(id_entrees)
+        id_fournisseurs = int(id_fournisseurs)
+
+        # Vérification existence 
+        if not entree_existe(id_entrees, id_fournisseurs):
+            print("\033[31mEntree non sauvegardée\033[0m")
+            print("\033[31mConseil : Consultez la liste des entrees\033[0m")
+            return None
+
+        return id_entrees, id_fournisseurs
+    s
+
 
 def demander_identifiants_sortie_existante(label_sortie, label_employe):
-    id_sorties = input(f"{label_sortie} : ").strip()
-    id_employes = input(f"{label_employe} : ").strip()
+    while True:
+        print()
+        id_sorties = input(f"{label_sortie}: ").strip()
+        id_employes = input(f"{label_employe}: ").strip()
 
-    if not sortie_existe(id_sorties, id_employes):
-        print("\033[31mSortie non sauvegardée\033[0m")
-        print("\033[31mConseil : Consultez la liste des sorties\033[0m")
-        return None
+        # Vérification numérique
+        if not id_sorties.isdigit() or not id_employes.isdigit():
+            print("Les identifiants doivent être numériques. Réessayez.\n")
+            continue
+        id_sorties = int(id_sorties)
+        id_employes = int(id_employes)
 
-    return id_sorties, id_employes
+        #vérification existence
+        if not sortie_existe(id_sorties, id_employes):
+            print("\033[31mSortie non sauvegardée\033[0m")
+            print("\033[31mConseil : Consultez la liste des sorties\033[0m")
+            return None
+
+        return id_sorties, id_employes
 
 
 
@@ -184,5 +232,8 @@ def demander_identifiants_ligne_sortie_existante(msg_ligne, msg_sortie):
         return None
 
     return id_ligne, id_sorties
+
+#fonction utilitaires module produit
+
 
 

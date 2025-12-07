@@ -30,7 +30,7 @@ CREATE TABLE employes (
     adresse VARCHAR(100) NOT NULL, 
     mobile VARCHAR(20) NOT NULL, 
     email VARCHAR(100) NOT NULL,
-    fonction ENUM('Pharmacien adjoint', 'assistant', 'caissier', 'magasinier', 'comptable') NOT NULL,
+    fonction ENUM('Pharmacien adjoint', 'Assistant', 'Caissier', 'Magasinier', 'Comptable') DEFAULT 'Assistant',
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut TINYINT(1) UNSIGNED DEFAULT 1 COMMENT '1=actif, 0=inactif'
 ) ENGINE = INNODB;
@@ -63,7 +63,7 @@ CREATE TABLE gestion_entree (
     id_entrees BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
     id_fournisseurs BIGINT UNSIGNED NOT NULL, 
     date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    statut_commande ENUM('en cours', 'validee', 'annulee') DEFAULT 'en cours',
+    statut_commande ENUM('En cours', 'Validee', 'Annulee') DEFAULT 'En cours',
     date_reception TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     observation TEXT NULL,
     
@@ -104,8 +104,8 @@ CREATE TABLE gestion_sortie (
     id_sorties BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
     id_employes BIGINT UNSIGNED NOT NULL, 
     date_sortie TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    destinataire ENUM ('particulier', 'professionnel')  NOT NULL,
-    statut ENUM('libre d''accès', 'sous ordonnance') NULL,
+    destinataire ENUM ('Particulier', 'Professionnel')  DEFAULT 'Particulier',
+    statut ENUM('Vente libre', 'Sous ordonnance') NULL,
     observation TEXT NULL,
     
     CONSTRAINT fk_sortie_employes
@@ -142,16 +142,12 @@ CREATE TABLE ligne_sortie (
 
 -- Remplissage de la table fournisseurs
 INSERT INTO fournisseurs (matricule, nom, adresse, mobile, email, statut) VALUES
-('NEW243LI001', 'NEW CESAMEX', 'Av. Kasa-Vubu, Lingwala, Kinshasa', '+243 970 111 001', 'contact@newcesamex.cd', 1),
-('ZEN243LI002', 'ZENUPHA LABORATOIRES', 'Av. Libération, Limete, Kinshasa', '+243 970 111 002', 'info@zenupha.cd', 1),
-('CAI243LI003', 'CAISA PHARMA INTERNATIONAL', 'Bd Lumumba, Limete, Kinshasa', '+243 970 111 003', 'contact@caisa.cd', 1),
-('PRI243LI004', 'PRINCE PHARMA SARL', 'Av. du Commerce, Limete, Kinshasa', '+243 970 111 004', 'contact@princepharma.cd', 1),
-('UNI243LI005', 'UNIQUE PHARMA SARL', 'Av. Kikwit n°45, Limete, Kinshasa', '+243 970 111 005', 'contact@uniquepharma.cd', 1),
-('PRO243GO006', 'PROMED S.A.R.L.', 'Av. de la Justice, Gombe, Kinshasa', '+243 970 111 006', 'info@promedlabo.cd', 1),
-('DYN243MA007', 'DYNAPHARM RD CONGO', 'Av. des Huileries, Matete, Kinshasa', '+243 970 111 007', 'contact@dynapharm.cd', 1),
-('PHA243GO008', 'PHARMAKINA SA', 'Av. du Port, Gombe, Kinshasa', '+243 970 111 008', 'info@pharmakina.cd', 1),
-('EVE243SE009', 'EVER GREEN PHARMACEUTICALS', 'Av. Kimpese, Selembao, Kinshasa', '+243 970 111 009', 'contact@evergreenpharmas.cd', 1),
-('SHA243GO010', 'SHALINA HEALTHCARE', '9-11 Av. de l’Action, Gombe, Kinshasa', '+243 970 111 010', 'info@shalina.cd', 1);
+('NEWC243LIME001', 'NEW CESAMEX', 'Av. Kasa-Vubu, Lingwala, Kinshasa', '+243 970 111 001', 'contact@newcesamex.cd', 1),
+('ZENL243LIME002', 'ZENUPHA LABORATOIRES', 'Av. Libération, Limete, Kinshasa', '+243 970 111 002', 'info@zenupha.cd', 1),
+('CAIP243LIME003', 'CAISA PHARMA INTERNATIONAL', 'Bd Lumumba, Limete, Kinshasa', '+243 970 111 003', 'contact@caisa.cd', 1),
+('PRIP243LIME004', 'PRINCE PHARMA SARL', 'Av. du Commerce, Limete, Kinshasa', '+243 970 111 004', 'contact@princepharma.cd', 1),
+('UNIP243LIME005', 'UNIQUE PHARMA SARL', 'Av. Kikwit n°45, Limete, Kinshasa', '+243 970 111 005', 'contact@uniquepharma.cd', 1),
+('PROS243GOME006', 'PROMED S.A.R.L.', 'Av. de la Justice, Gombe, Kinshasa', '+243 970 111 006', 'info@promedlabo.cd', 1);
 
 -- remplissage de la table employes
 INSERT INTO employes (matricule, nom, prenom, date_naissance, genre, adresse, mobile, email, fonction, statut) VALUES
@@ -180,41 +176,40 @@ INSERT INTO produits (id_fournisseurs, ref_produit, code_atc, nom_commercial, dc
 (5,'REF009','E010AH1','Ventolin','Salbutamol','100mcg','Inhalateur','Inhalateur doseur 200 sprays',10,150,'Bronchodilatateur',1),
 (5,'REF010','E020AI1','Asmanex','Mometasone','220mcg','Inhalateur','Inhalateur doseur 120 sprays',10,120,'Corticostéroïde inhalé',1),
 (6,'REF011','F010AJ1','Lansoprazole','Lansoprazole','30mg','Capsule','Boîte de 14 capsules gastro-résistantes',25,200,'Inhibiteur de la pompe à protons',1),
-(6,'REF012','F020AK1','Oméprazole','Oméprazole','20mg','Capsule','Boîte de 14 capsules gastro-résistantes',25,220,'Antiacide',1),
-(7,'REF013','G010AL1','Lipitor','Atorvastatine','20mg','Comprimé','Boîte de 30 comprimés pelliculés',15,150,'Réducteur de cholestérol',1),
-(7,'REF014','G020AM1','Crestor','Rosuvastatine','10mg','Comprimé','Boîte de 28 comprimés pelliculés',15,140,'Statine',1),
-(8,'REF015','H010AN1','Metformine','Metformine','500mg','Comprimé','Boîte de 30 comprimés à libération prolongée',40,400,'Antidiabétique oral',1),
-(8,'REF016','H020AO1','Glucophage','Metformine','850mg','Comprimé','Boîte de 30 comprimés pelliculés',40,380,'Gère le diabète type 2',1),
-(9,'REF017','I010AP1','Aspirine','Acide acétylsalicylique','100mg','Comprimé','Boîte de 20 comprimés effervescents',30,300,'Anti-inflammatoire et anticoagulant',1),
-(9,'REF018','I020AQ1','Aspegic','Acide acétylsalicylique','500mg','Comprimé','Boîte de 20 comprimés pelliculés',30,250,'Soulage douleur et inflammation',1),
-(10,'REF019','J010AR1','Paracétamol 650','Paracétamol','650mg','Comprimé','Boîte de 12 comprimés effervescents',50,400,'Antalgique et antipyrétique',1),
-(10,'REF020','J020AS1','Ibuprofène 400','Ibuprofène','400mg','Comprimé','Boîte de 16 comprimés filmés',40,350,'Anti-inflammatoire',1),
-(1,'REF021','A030AT1','Amoxiclav','Amoxicilline/Acide clavulanique','500mg/125mg','Comprimé','Boîte de 12 comprimés filmés',30,250,'Antibiotique combiné',1),
+(5,'REF012','F020AK1','Oméprazole','Oméprazole','20mg','Capsule','Boîte de 14 capsules gastro-résistantes',25,220,'Antiacide',1),
+(4,'REF013','G010AL1','Lipitor','Atorvastatine','20mg','Comprimé','Boîte de 30 comprimés pelliculés',15,150,'Réducteur de cholestérol',1),
+(4,'REF014','G020AM1','Crestor','Rosuvastatine','10mg','Comprimé','Boîte de 28 comprimés pelliculés',15,140,'Statine',1),
+(4,'REF015','H010AN1','Metformine','Metformine','500mg','Comprimé','Boîte de 30 comprimés à libération prolongée',40,400,'Antidiabétique oral',1),
+(4,'REF016','H020AO1','Glucophage','Metformine','850mg','Comprimé','Boîte de 30 comprimés pelliculés',40,380,'Gère le diabète type 2',1),
+(4,'REF017','I010AP1','Aspirine','Acide acétylsalicylique','100mg','Comprimé','Boîte de 20 comprimés effervescents',30,300,'Anti-inflammatoire et anticoagulant',1),
+(4,'REF018','I020AQ1','Aspegic','Acide acétylsalicylique','500mg','Comprimé','Boîte de 20 comprimés pelliculés',30,250,'Soulage douleur et inflammation',1),
+(5,'REF019','J010AR1','Paracétamol 650','Paracétamol','650mg','Comprimé','Boîte de 12 comprimés effervescents',50,400,'Antalgique et antipyrétique',1),
+(3,'REF020','J020AS1','Ibuprofène 400','Ibuprofène','400mg','Comprimé','Boîte de 16 comprimés filmés',40,350,'Anti-inflammatoire',1),
+(2,'REF021','A030AT1','Amoxiclav','Amoxicilline/Acide clavulanique','500mg/125mg','Comprimé','Boîte de 12 comprimés filmés',30,250,'Antibiotique combiné',1),
 (2,'REF022','B030AU1','Azithromycine','Azithromycine','500mg','Comprimé','Boîte de 6 comprimés pelliculés',20,200,'Antibiotique à large spectre',1),
 (3,'REF023','C030AV1','Diclofénac','Diclofénac','50mg','Comprimé','Boîte de 20 comprimés à libération prolongée',35,300,'Anti-inflammatoire',1),
 (4,'REF024','D030AW1','Naproxène','Naproxène','250mg','Comprimé','Boîte de 14 comprimés pelliculés',35,280,'Anti-inflammatoire',1),
 (5,'REF025','E030AX1','Salbutamol','Salbutamol','100mcg','Inhalateur','Inhalateur doseur 150 sprays',10,150,'Bronchodilatateur',1),
 (6,'REF026','F030AY1','Ranitidine','Ranitidine','150mg','Comprimé','Boîte de 20 comprimés gastro-résistants',25,220,'Antiacide',1),
-(7,'REF027','G030AZ1','Simvastatine','Simvastatine','20mg','Comprimé','Boîte de 30 comprimés pelliculés',15,150,'Réducteur de cholestérol',1),
-(8,'REF028','H030BA1','Gliclazide','Gliclazide','80mg','Comprimé','Boîte de 30 comprimés à libération prolongée',40,380,'Antidiabétique',1),
-(9,'REF029','I030BB1','Diclofénac','Diclofénac','100mg','Comprimé','Boîte de 20 comprimés filmés',35,300,'Anti-inflammatoire',1),
-(10,'REF030','J030BC1','Oméprazole','Oméprazole','20mg','Capsule','Boîte de 14 capsules gastro-résistantes',25,220,'Anti-acide gastrique',1);
+(4,'REF027','G030AZ1','Simvastatine','Simvastatine','20mg','Comprimé','Boîte de 30 comprimés pelliculés',15,150,'Réducteur de cholestérol',1),
+(4,'REF028','H030BA1','Gliclazide','Gliclazide','80mg','Comprimé','Boîte de 30 comprimés à libération prolongée',40,380,'Antidiabétique',1),
+(4,'REF029','I030BB1','Diclofénac','Diclofénac','100mg','Comprimé','Boîte de 20 comprimés filmés',35,300,'Anti-inflammatoire',1),
+(5,'REF030','J030BC1','Oméprazole','Oméprazole','20mg','Capsule','Boîte de 14 capsules gastro-résistantes',25,220,'Anti-acide gastrique',1);
 
 -- remplissage de la table gestion_entree
 
 -- Gestion des entrées par fournisseur
 INSERT INTO gestion_entree (id_fournisseurs, date_commande, statut_commande, date_reception, observation) VALUES
-(1, NOW() - INTERVAL 10 DAY, 'validee', NOW() - INTERVAL 8 DAY, 'Stock initial'),
-(2, NOW() - INTERVAL 9 DAY, 'validee', NOW() - INTERVAL 7 DAY, 'Stock initial'),
-(3, NOW() - INTERVAL 8 DAY, 'validee', NOW() - INTERVAL 6 DAY, 'Stock initial'),
-(4, NOW() - INTERVAL 7 DAY, 'validee', NOW() - INTERVAL 5 DAY, 'Stock initial'),
-(5, NOW() - INTERVAL 6 DAY, 'validee', NOW() - INTERVAL 4 DAY, 'Stock initial'),
-(6, NOW() - INTERVAL 5 DAY, 'validee', NOW() - INTERVAL 3 DAY, 'Stock initial'),
-(7, NOW() - INTERVAL 4 DAY, 'validee', NOW() - INTERVAL 2 DAY, 'Stock initial'),
-(8, NOW() - INTERVAL 3 DAY, 'validee', NOW() - INTERVAL 1 DAY, 'Stock initial'),
-(9, NOW() - INTERVAL 2 DAY, 'validee', NOW(), 'Stock initial'),
-(10, NOW() - INTERVAL 1 DAY, 'validee', NOW(), 'Stock initial');
-
+(1, NOW() - INTERVAL 10 DAY, 'Validee', NOW() - INTERVAL 8 DAY, 'Stock initial'),
+(2, NOW() - INTERVAL 9 DAY, 'Validee', NOW() - INTERVAL 7 DAY, 'Stock initial'),
+(3, NOW() - INTERVAL 8 DAY, 'Validee', NOW() - INTERVAL 6 DAY, 'Stock initial'),
+(4, NOW() - INTERVAL 7 DAY, 'Validee', NOW() - INTERVAL 5 DAY, 'Stock initial'),
+(5, NOW() - INTERVAL 6 DAY, 'Validee', NOW() - INTERVAL 4 DAY, 'Stock initial'),
+(6, NOW() - INTERVAL 5 DAY, 'Validee', NOW() - INTERVAL 3 DAY, 'Stock initial'),
+(4, NOW() - INTERVAL 4 DAY, 'Validee', NOW() - INTERVAL 2 DAY, 'Stock initial'),
+(4, NOW() - INTERVAL 3 DAY, 'Validee', NOW() - INTERVAL 1 DAY, 'Stock initial'),
+(3, NOW() - INTERVAL 2 DAY, 'Validee', NOW(), 'Stock initial'),
+(6, NOW() - INTERVAL 1 DAY, 'Validee', NOW(), 'Stock initial');
 
 
 -- remplissage de la table ligne_entree
@@ -255,16 +250,16 @@ INSERT INTO ligne_entree (id_entrees, id_produits, numero_lot, peremption, quant
 
 -- Sorties enregistrées par les employés
 INSERT INTO gestion_sortie (id_employes, date_sortie, destinataire, statut, observation) VALUES
-(1, NOW() - INTERVAL 9 DAY, 'particulier', 'libre d''accès', 'Vente comptoir Doliprane'),
-(2, NOW() - INTERVAL 8 DAY, 'particulier', 'sous ordonnance', 'Vente sur ordonnance'),
-(3, NOW() - INTERVAL 7 DAY, 'professionnel', 'libre d''accès', 'Approvisionnement clinique locale'),
-(4, NOW() - INTERVAL 6 DAY, 'particulier', 'libre d''accès', 'Demande client directe'),
-(5, NOW() - INTERVAL 5 DAY, 'professionnel', 'sous ordonnance', 'Distribution à pharmacie partenaire'),
-(6, NOW() - INTERVAL 4 DAY, 'particulier', 'libre d''accès', 'Vente de routine'),
-(7, NOW() - INTERVAL 3 DAY, 'particulier', 'sous ordonnance', 'Ordonnance patient chronique'),
-(8, NOW() - INTERVAL 2 DAY, 'professionnel', 'libre d''accès', 'Sortie vers dépôt médical'),
-(9, NOW() - INTERVAL 1 DAY, 'particulier', 'sous ordonnance', 'Traitement court terme'),
-(10, NOW(), 'professionnel', 'libre d''accès', 'Vente à établissement partenaire');
+(1, NOW() - INTERVAL 9 DAY, 'Particulier', 'Vente libre', 'Vente comptoir Doliprane'),
+(2, NOW() - INTERVAL 8 DAY, 'Particulier', 'Sous ordonnance', 'Vente sur ordonnance'),
+(3, NOW() - INTERVAL 7 DAY, 'Professionnel', 'Vente libre', 'Approvisionnement clinique locale'),
+(4, NOW() - INTERVAL 6 DAY, 'Particulier', 'Vente libre', 'Demande client directe'),
+(5, NOW() - INTERVAL 5 DAY, 'Professionnel', 'Sous ordonnance', 'Distribution à pharmacie partenaire'),
+(6, NOW() - INTERVAL 4 DAY, 'Particulier', 'Vente libre', 'Vente de routine'),
+(7, NOW() - INTERVAL 3 DAY, 'Particulier', 'Sous ordonnance', 'Ordonnance patient chronique'),
+(8, NOW() - INTERVAL 2 DAY, 'Professionnel', 'Vente libre', 'Sortie vers dépôt médical'),
+(9, NOW() - INTERVAL 1 DAY, 'Particulier', 'Sous ordonnance', 'Traitement court terme'),
+(10,NOW() - INTERVAL 10 DAY, 'Professionnel', 'Vente libre', 'Vente à établissement partenaire');
 
 
 -- remplissage de la table ligne_sortie

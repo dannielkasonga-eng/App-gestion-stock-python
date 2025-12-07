@@ -64,11 +64,9 @@ def modifier_fournisseur(matricule, fournisseur):
 
 
 # 3. Rechercher un ou plusieurs fournisseurs (infos restreintes)
-def rechercher_fournisseur(matricules):
+def rechercher_fournisseur(matricule):
     conn = get_connection()
-    cursor = conn.cursor()
-
-    liste_matricules = [m.strip() for m in matricules.split(",")]
+    cur = conn.cursor()
 
     table = PrettyTable(["Matricule", "Nom", "Adresse", "Mobile"])
 
@@ -78,29 +76,25 @@ def rechercher_fournisseur(matricules):
         WHERE matricule = %s
     """
 
-    for m in liste_matricules:
-        cursor.execute(sql, (m,))
-        row = cursor.fetchone()
-        if row:
-            table.add_row(row)
+    cur.execute(sql, (matricule,))
+    row = cur.fetchone()
+    if row:
+        table.add_row(row)
 
-    cursor.close()
+    cur.close()
     conn.close()
-
     return table
 
 
 
 # 4. Consulter un ou plusieurs fournisseurs (détails complets + entrées)
-def consulter_fournisseur(matricules):
+def consulter_fournisseur(matricule):
     conn = get_connection()
     cursor = conn.cursor()
 
-    liste_matricules = [m.strip() for m in matricules.split(",")]
-
     table = PrettyTable([
         "ID", "Matricule", "Nom", "Adresse", "Mobile", "Email",
-        "Statut", "Date commande", "Statut commande", "Date réception"
+        "Statut", "Date commande", "Statut commande", "Date livraison"
     ])
 
     sql = """
@@ -113,22 +107,20 @@ def consulter_fournisseur(matricules):
                f.statut,
                e.date_commande,
                e.statut_commande,
-               e.date_reception
+               e.date_reception AS Date_livraison
         FROM fournisseurs f
-        INNER JOIN gestion_entree e
+        LEFT JOIN gestion_entree e
         ON f.id_fournisseurs = e.id_fournisseurs
         WHERE f.matricule = %s
     """
 
-    for m in liste_matricules:
-        cursor.execute(sql, (m,))
-        rows = cursor.fetchall()
-        for row in rows:
-            table.add_row(row)
+    cursor.execute(sql, (matricule,))
+    rows = cursor.fetchall()
+    for row in rows:
+        table.add_row(row)
 
     cursor.close()
     conn.close()
-
     return table
 
 
@@ -185,6 +177,18 @@ def lister_fournisseurs():
     conn.close()
 
     return table
+
+def id_fournisseurs_existe(id_four):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    sql = "SELECT COUNT(*) FROM fournisseurs WHERE id_fournisseurs = %s"
+    cur.execute(sql, (id_four,))
+    existe = cur.fetchone()[0] > 0
+
+    cur.close()
+    conn.close()
+    return existe
 
 # 8 get_fournisseur_by_matricule
 

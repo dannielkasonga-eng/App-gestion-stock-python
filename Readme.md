@@ -87,7 +87,7 @@ nombre de lignes contenu dans chaque table : ***
 - use gestion_stock
 - show tables;
 
-## configuration de l'application de gestion de stock python
+## configuration de l'application de gestion du stock python
 
 1 télécharger le driver mysql-connector-python-9.5.0 
 2 lancer l'invite de commande 

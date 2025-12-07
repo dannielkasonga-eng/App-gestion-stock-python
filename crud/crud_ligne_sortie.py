@@ -103,3 +103,20 @@ def ligne_sortie_existe(id_ligne, id_sorties):
     conn.close()
 
     return resultat is not None
+
+def get_ligne_sortie_by_ids(id_ligne, id_sorties):
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)
+
+    cur.execute("""
+        SELECT *
+        FROM ligne_sortie
+        WHERE id_ligne=%s AND id_sorties=%s
+    """, (id_ligne, id_sorties))
+
+    data = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return data

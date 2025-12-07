@@ -103,4 +103,21 @@ def ligne_entree_existe(id_ligne, id_entrees):
 
     return resultat is not None
 
+def get_ligne_entree_by_ids(id_ligne, id_entrees):
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)
+
+    cur.execute("""
+        SELECT *
+        FROM ligne_entree
+        WHERE id_ligne=%s AND id_entrees=%s
+    """, (id_ligne, id_entrees))
+
+    data = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return data
+
 

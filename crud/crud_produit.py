@@ -8,11 +8,10 @@ def ajouter_produit(produit):
 
     sql = """
         INSERT INTO produits(
-            ref_produit, code_atc, nom_commercial, dci,
-            description_produit, stock_minimum, stock_maximum,
-            statut
+            id_fournisseurs, ref_produit, code_atc, nom_commercial, dci, dosage, forme, conditionnement, 
+            stock_minimum, stock_maximum, description_produit, statut
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
     values = (
@@ -21,9 +20,12 @@ def ajouter_produit(produit):
         produit.code_atc,
         produit.nom_commercial,
         produit.dci,
-        produit.description_produit,
+        produit.dosage,
+        produit.forme,
+        produit.conditionnement,
         produit.stock_minimum,
         produit.stock_maximum,
+        produit.description_produit,
         produit.statut
     )
 

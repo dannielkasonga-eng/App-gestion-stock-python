@@ -1,6 +1,7 @@
 from Configuration.config import get_connection
 from prettytable import PrettyTable
 from datetime import datetime
+from modules.entree import Entree
 
 #1. ajouter une entrée
 def ajouter_entree(entree):
@@ -12,8 +13,8 @@ def ajouter_entree(entree):
     conn = get_connection()
     cur = conn.cursor()
 
-    # Si statut 'validé', date_reception = maintenant
-    if entree.statut_commande.lower() == "validé":
+    # Si statut 'Validee', date_reception = maintenant
+    if entree.statut_commande.lower() == "Validee":
         date_reception = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     else:
         date_reception = None
@@ -41,24 +42,34 @@ def ajouter_entree(entree):
 
 
 # 2. Modifier une entrée
-def modifier_entree(id_entrees, id_fournisseurs, nouveaux_champs: dict):
-    
+def modifier_entree(id_entrees, id_fournisseurs, entree: Entree):
+
     conn = get_connection()
     cur = conn.cursor()
 
-    set_clause = ", ".join([f"{col}=%s" for col in nouveaux_champs.keys()])
-    values = list(nouveaux_champs.values()) + [id_entrees, id_fournisseurs]
-
-    sql = f"""
+    sql = """
         UPDATE gestion_entree
-        SET {set_clause}
-        WHERE id_entrees=%s AND id_fournisseurs=%s
+        SET id_fournisseurs=%s,
+            statut_commande=%s,
+            observation=%s
+        WHERE id_entrees=%s
+        AND id_fournisseurs=%s
     """
+
+    values = (
+        entree.id_fournisseurs,
+        entree.statut_commande,
+        entree.observation,
+        id_entrees,
+        id_fournisseurs
+    )
+
     cur.execute(sql, values)
     conn.commit()
 
     cur.close()
     conn.close()
+
 
 # 3. Consulter une entrée (détails avec jointure)
 def consulter_entree(id_entrees, id_fournisseurs):
@@ -176,5 +187,22 @@ def rechercher_entree(id_entrees, id_fournisseurs=None):
     conn.close()
 
     return result is not None
+
+def get_entree_by_ids(id_entrees, id_fournisseurs):
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)
+
+    cur.execute("""
+        SELECT *
+        FROM gestion_entree
+        WHERE id_entrees=%s AND id_fournisseurs=%s
+    """, (id_entrees, id_fournisseurs))
+
+    data = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return data
 
 

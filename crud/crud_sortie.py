@@ -137,7 +137,7 @@ def lister_sortie():
 
     return table
 
-def employe_peut_sortir(id_employes):
+def employe_valide(id_employes):
     conn = get_connection()
     cur = conn.cursor()
 
@@ -153,7 +153,7 @@ def employe_peut_sortir(id_employes):
 
     fonction = row[0].lower()
 
-    return fonction in ["pharmacien adjoint", "assistant", "caissier"]
+    return fonction in ["Pharmacien adjoint", "Assistant", "Caissier"]
 
 def sortie_existe(id_sorties, id_employes):
     conn = get_connection()
@@ -200,5 +200,21 @@ def rechercher_sortie(id_sorties, id_employes=None):
 
     return result is not None
 
+def get_sortie_by_ids(id_sorties, id_employes):
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)
+
+    cur.execute("""
+        SELECT *
+        FROM gestion_sortie
+        WHERE id_sorties=%s AND id_employes=%s
+    """, (id_sorties, id_employes))
+
+    data = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return data
 
 
