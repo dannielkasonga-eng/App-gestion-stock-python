@@ -1,54 +1,68 @@
 # Application de gestion de stock - Pharmacie
 
 Application console en Python avec une connexion à une base de données MySQL permettant la gestion  
-de stock des produits avec 5 modules principaux : 
+de stock des produits avec 7 modules principaux : 
 
-- employes
-- fournisseurs
-- produits
-- entrees (lignes entrée)
-- sorties (lignes sortie)
+- employe
+- fournisseur
+- produit
+- entree 
+- sortie 
+- ligne_entree
+- ligne_sortie
 
 ## Fonctionnalités principales 
-
 ### Gestion des employés :
 - Ajouter un employé
 - Modifier un employé
-- Activer/ Désactiver un employé
 - Rechercher un employé
-- Consulter les details des employés
-- lister les employés
+- Consulter un employé
+- lister les employés 
+- Désactiver/ Activer un employé
+
 
 ### Gestion des fournisseurs
 - Ajouter un fournisseur 
 - Modifier un fournisseur
-- Activer/ Désactiver des fournisseurs leur identifiant
-- Rechercher des fournisseurs par  identifiant
-- Consulter les details des fournisseurs par leur matricule
+- Rechercher un fournisseur
+- Consulter un fournisseur
 - lister les fournisseurs
+- Désactiver/ Activer un fournisseur
 
 ### Gestion des produits
 - Ajouter un produit
 - Modifier un produit
-- Activer/ Désactiver des produits via leur référence
-- Rechercher des produit via leur référence
-- Consulter les détails des produits via leur matricule 
-- lister routes les produits
+- Rechercher un produit
+- Consulter un produit
+- lister les produits
+- Désactiver/ Activer un produit
+- Vérifier l'état du stock d'un produit
 
 ### Gestion des entrees
 - Ajouter une entree
 - Modifier une entree
-- Consulter Tous les details d'une entree
-- Rechercher une entree ou plusieurs entrees via leur identifiants
+- Consulter une entree
+- Rechercher une entree 
 - lister toutes les entrees 
 
 
 ### Gestion des sorties
 - Ajouter  une sortie
 - Modifier une sortie
-- Consulter Tous les details d'une sortie
-- Rechercher une  ou plusieurs sorties via leur identifiants
+- Consulter une sortie
+- Rechercher une  sortie
 - lister toutes les sorties
+
+## Gestion des lignes entree
+- Ajouter une ligne entree
+- Modifier une ligne entree
+- Lister toutes les lignes entree
+
+## Gestion des lignes sortie
+- Ajouter une ligne sortie
+- Modifier une ligne sortie
+- Lister toutes les lignes sortie
+
 
 ## Technologies utilisées
 
@@ -128,7 +142,9 @@ def get_connection():
 
 ## struture du travail 
 
-C:
+C:.
+│   Readme.md
+│
 ├───Configuration
 │      config.py
 │      __init__.py
@@ -136,15 +152,15 @@ C:
 │   
 │
 ├───crud
-│      employes_crud.py
-│      fournisseurs_crud.py
-│      gestion_entree_crud.py
-│      gestion_sortie_crud.py
-│      ligne_entree_crud.py
-│      ligne_sortie_crud.py
-│      produits_crud.py
+│      crud_employe.py
+│      crud_entree.py
+│      crud_fournisseur.py
+│      crud_ligne_entree.py
+│      crud_ligne_sortie.py
+│      crud_produit.py
+│      crud_sortie.py
 │      __init__.py
-│   
+│  
 │   
 │
 ├───database
@@ -152,29 +168,28 @@ C:
 │       drop_database.sql
 │       reset_database.sql
 │
-├───models
-│      employes.py
-│      fournisseurs.py
-│      gestion_entree.py
-│      gestion_sortie.py
+├───modules
+│      employe.py
+│      entree.py
+│      fournisseur.py
 │      ligne_entree.py
 │      ligne_sortie.py
-│      produits.py
+│      produit.py
+│      sortie.py
 │      __init__.py
 │   
 │   
 │
 ├───src
-│   │   main.py
-│   │   __init__.py
-│   │
-│   └───__pycache__
-│           main.cpython-313.pyc
-│           __init__.cpython-313.pyc
+│      main.py
+│      __init__.py
+│   
+│  
 │
 └───utils
        utils.py
        __init__.py
+    
     
 
 ## structure de la base de données 
@@ -238,7 +253,7 @@ numero_lot : Numéro de lot
 peremption : Date de péremption
 quantite : Quantité reçue
 prix_unitaire_entree : Prix d’achat unitaire
-emplacement : Zone de stockage (Z-PMO, Z-TAC, etc.)
+emplacement : Zone de stockage (Z-PMO, Z-TAC, Z-Q, Z-ER.)
 
 ## Table gestion_sortie
 
